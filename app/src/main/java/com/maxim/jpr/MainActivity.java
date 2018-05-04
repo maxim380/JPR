@@ -55,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private void loadApp() {
+        BottomNavigationView nav = findViewById(R.id.navigation);
+        nav.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         this.stationlist = StationSupplier.getStations();
         loadLibraryPage();
     }

@@ -98,14 +98,6 @@ public class PlayerPage extends Fragment {
         if(file != null) {
             titleText.setText(file.getTitle());
 //            infoText.setText(file.getArtist() + " - " + file.getAlbum());
-            if(activity.currentSongIsLastSong()) {
-                nextImg.setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP);
-            } else if (activity.currentSongIsFirstSong()) {
-                prevImg.setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP);
-            } else {
-                prevImg.setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
-                nextImg.setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_ATOP);
-            }
             albumArt.setImageBitmap(file.getAlbumArt());
         }
     }
