@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.maxim.jpr.Fragments.LibraryPage;
 import com.maxim.jpr.Fragments.PlayerPage;
 import com.maxim.jpr.Fragments.SettingsPage;
@@ -26,13 +27,16 @@ public class MainActivity extends AppCompatActivity {
     private boolean serviceBound = false;
     private ArrayList<Station> stationlist;
     private int currentSongIndex;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         loadApp();
         changeColor(getColor());
+
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
