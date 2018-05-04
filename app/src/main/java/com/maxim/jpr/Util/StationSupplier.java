@@ -1,15 +1,47 @@
 package com.maxim.jpr.Util;
 
+import android.support.annotation.NonNull;
+import android.util.Log;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.maxim.jpr.Models.Station;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import static android.support.constraint.Constraints.TAG;
 
 public class StationSupplier {
 
     public static ArrayList<Station> getStations() {
-        ArrayList<Station> stations = new ArrayList<Station>();
-        stations.add(new Station("http://sky1.torontocast.com:9029/stream/1/?cb=500961.mp3", "J-Pop Powerplay Kawaii", "Kawaiiiiiiii", null));
+        return test();
+    }
 
+    private static ArrayList<Station> test() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        final ArrayList<Station> stations = new ArrayList<>();
+        db.collection("stations")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (DocumentSnapshot document : task.getResult()) {
+                                stations.add(new Station(document.get("url").toString(), document.get("name").toString(), document.get("description").toString(), document.get("imgURL").toString()));
+                            }
+                        } else {
+                            Log.w(TAG, "Error getting documents.", task.getException());
+                        }
+                    }
+                });
         return stations;
     }
 }

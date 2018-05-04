@@ -1,8 +1,10 @@
 package com.maxim.jpr.Models;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import java.io.Serializable;
+import java.net.URL;
 
 /**
  * Created by maxim on 3/17/2018.
@@ -15,11 +17,20 @@ public class Station implements Serializable {
     private String description;
     private transient Bitmap albumArt;
 
-    public Station(String url, String title, String description, Bitmap albumArt) {
+    public Station(String url, String title, String description, String albumArt) {
         this.url = url;
         this.title = title;
         this.description = description;
-        this.albumArt = albumArt;
+        if(albumArt == "") {
+            this.albumArt = null;
+        } else {
+            try {
+                URL imgURL = new URL(albumArt);
+                this.albumArt = BitmapFactory.decodeStream(imgURL.openConnection().getInputStream());
+            } catch(Exception e) {
+                this.albumArt = null;
+            }
+        }
     }
 
     public String getUrl() {
