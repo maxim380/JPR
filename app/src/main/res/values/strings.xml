@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">VisionPlayer</string>
+    <string name="app_name">JPR</string>
     <string name="noPermission">No permission given</string>
     <string name="grant_permission">Grant permission</string>
     <string name="noPermissionText">VisionPlayer needs to be able to read your memory in order to play your songs. Press the button below to grant permission.</string>
