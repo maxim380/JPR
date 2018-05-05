@@ -8,8 +8,8 @@
 
     <item
         android:id="@+id/navigation_nowPlaying"
-        android:icon="@drawable/ic_play_circle_filled"
-        android:title="@string/nowPlaying" />
+        android:icon="@drawable/ic_radio"
+        android:title="@string/nowPlaying"/>
 
     <item
         android:id="@+id/navigation_settings"

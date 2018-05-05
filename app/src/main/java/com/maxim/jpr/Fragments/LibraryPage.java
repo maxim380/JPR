@@ -68,17 +68,20 @@ public class LibraryPage extends Fragment {
 
         private TextView mItemText;
         private ImageView mItemImage;
+        private TextView mItemDescription;
 
         public ListViewHolder(View itemView) {
             super(itemView);
             mItemText = (TextView) itemView.findViewById(R.id.itemText);
             mItemImage = (ImageView) itemView.findViewById(R.id.itemImage);
+            mItemDescription = (TextView) itemView.findViewById(R.id.itemDescription);
             itemView.setOnClickListener(this);
         }
 
         public void bindView(int position) {
             mItemText.setText(files.get(position).getTitle());
             mItemImage.setImageBitmap(files.get(position).getAlbumArt());
+            mItemDescription.setText(files.get(position).getDescription());
         }
 
         public void onClick(View view) {

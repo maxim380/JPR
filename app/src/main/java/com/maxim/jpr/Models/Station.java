@@ -16,11 +16,13 @@ public class Station implements Serializable {
     private String title;
     private String description;
     private transient Bitmap albumArt;
+    private String infoURL;
 
-    public Station(String url, String title, String description, String albumArt) {
+    public Station(String url, String title, String description, String albumArt, String infoURL) {
         this.url = url;
         this.title = title;
         this.description = description;
+        this.infoURL = infoURL;
         if(albumArt == "") {
             this.albumArt = null;
         } else {
@@ -63,5 +65,13 @@ public class Station implements Serializable {
 
     public void setAlbumArt(Bitmap albumArt) {
         this.albumArt = albumArt;
+    }
+
+    public String getInfoURL() {
+        return infoURL;
+    }
+
+    public void setInfoURL(String infoURL) {
+        this.infoURL = infoURL;
     }
 }

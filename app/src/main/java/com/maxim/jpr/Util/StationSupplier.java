@@ -35,7 +35,7 @@ public class StationSupplier {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (DocumentSnapshot document : task.getResult()) {
-                                stations.add(new Station(document.get("url").toString(), document.get("name").toString(), document.get("description").toString(), document.get("imgURL").toString()));
+                                stations.add(new Station(document.get("url").toString(), document.get("name").toString(), document.get("description").toString(), document.get("imgURL").toString(), document.get("infoURL").toString()));
                             }
                         } else {
                             Log.w(TAG, "Error getting documents.", task.getException());
