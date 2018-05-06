@@ -6,21 +6,26 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.maxim.jpr.Fragments.LibraryPage;
 import com.maxim.jpr.Fragments.PlayerPage;
 import com.maxim.jpr.Fragments.SettingsPage;
+import com.maxim.jpr.Fragments.SplashScreen;
 import com.maxim.jpr.Models.Station;
 import com.maxim.jpr.Util.StationSupplier;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
     private MediaPlayerService mediaPlayer;
@@ -33,9 +38,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        loadSplashScreen();
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-        loadApp();
-        changeColor(getColor());
+
+        Handler handler = new Handler();
+        stationlist = StationSupplier.getStations();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                loadApp();
+                changeColor(getColor());
+            }
+        }, 5000);   //5 seconds
 
     }
 
@@ -58,10 +71,21 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private void loadSplashScreen() {
+        BottomNavigationView nav = findViewById(R.id.navigation);
+        nav.setVisibility(View.INVISIBLE);
+
+        SplashScreen fragment = new SplashScreen();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.add(R.id.content, fragment, "");
+        transaction.commit();
+    }
+
     private void loadApp() {
         BottomNavigationView nav = findViewById(R.id.navigation);
         nav.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        this.stationlist = StationSupplier.getStations();
+
+        nav.setVisibility(View.VISIBLE);
         loadLibraryPage();
     }
 
@@ -81,7 +105,6 @@ public class MainActivity extends AppCompatActivity {
     public void loadNowPlayingPage(Boolean fromPress) {
         Bundle bundle = new Bundle();
         bundle.putBoolean("fromPress", fromPress);
-
 
         PlayerPage fragment = new PlayerPage();
         fragment.setArguments(bundle);
@@ -211,17 +234,5 @@ public class MainActivity extends AppCompatActivity {
     public void setNavBarNowPlayingSelected() {
         BottomNavigationView nav = (BottomNavigationView) findViewById(R.id.navigation);
         nav.setSelectedItemId(R.id.navigation_nowPlaying);
-    }
-
-    public int getCurrentSongIndex() {
-        return this.currentSongIndex;
-    }
-
-    public boolean currentSongIsFirstSong() {
-        return currentSongIndex == 0;
-    }
-
-    public boolean currentSongIsLastSong() {
-        return currentSongIndex == stationlist.size() - 1;
     }
 }
