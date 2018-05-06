@@ -87,7 +87,8 @@ public class LibraryPage extends Fragment {
         public void onClick(View view) {
             MainActivity activity = (MainActivity) getActivity();
             activity.playAudio(files.get(this.getAdapterPosition()).getUrl(), this.getAdapterPosition());
-//            activity.loadNowPlayingPage();
+            activity.setNavBarNowPlayingSelected();
+            activity.loadNowPlayingPage(true);
         }
     }
 

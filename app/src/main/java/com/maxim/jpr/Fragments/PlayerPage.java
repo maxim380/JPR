@@ -53,7 +53,8 @@ public class PlayerPage extends Fragment {
 
         activity = (MainActivity) getActivity();
         mediaPlayer = activity.getMediaPlayer();
-
+        Bundle bundle = this.getArguments();
+        boolean fromPress = bundle.getBoolean("fromPress");
 
         titleText = (TextView) view.findViewById(R.id.textViewTitle);
         infoText = (TextView) view.findViewById(R.id.textViewSongInfo);
@@ -71,6 +72,9 @@ public class PlayerPage extends Fragment {
                 playImg.setTag(R.drawable.ic_pause);
                 playImg.setImageResource(R.drawable.ic_pause);
             }
+        } else if(fromPress) {
+            playImg.setTag(R.drawable.ic_pause);
+            playImg.setImageResource(R.drawable.ic_pause);
         }
 
 

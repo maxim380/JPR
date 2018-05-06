@@ -2,6 +2,7 @@ package com.maxim.jpr.Models;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 
 import java.io.Serializable;
 import java.net.URL;
@@ -26,12 +27,7 @@ public class Station implements Serializable {
         if(albumArt == "") {
             this.albumArt = null;
         } else {
-            try {
-                URL imgURL = new URL(albumArt);
-                this.albumArt = BitmapFactory.decodeStream(imgURL.openConnection().getInputStream());
-            } catch(Exception e) {
-                this.albumArt = null;
-            }
+            new getArt().execute(albumArt);
         }
     }
 
@@ -51,10 +47,6 @@ public class Station implements Serializable {
         return this.albumArt;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -71,7 +63,23 @@ public class Station implements Serializable {
         return infoURL;
     }
 
-    public void setInfoURL(String infoURL) {
-        this.infoURL = infoURL;
+    private class getArt extends AsyncTask<String, String, Bitmap> {
+
+        @Override
+        protected Bitmap doInBackground(String... strings) {
+            String url = strings[0];
+            try {
+                URL imgURL = new URL(url);
+                return BitmapFactory.decodeStream(imgURL.openConnection().getInputStream());
+            } catch(Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap result) {
+            albumArt = result;
+        }
     }
 }

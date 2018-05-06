@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
                     loadLibraryPage();
                     return true;
                 case R.id.navigation_nowPlaying:
-                    loadNowPlayingPage();
+                    loadNowPlayingPage(false);
                     return true;
                 case R.id.navigation_settings:
                     loadSettingsPage();
@@ -78,8 +78,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void loadNowPlayingPage() {
+    public void loadNowPlayingPage(Boolean fromPress) {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("fromPress", fromPress);
+
+
         PlayerPage fragment = new PlayerPage();
+        fragment.setArguments(bundle);
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.content, fragment, "FragmentName");
         fragmentTransaction.commit();
@@ -201,6 +206,11 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
         }
+    }
+
+    public void setNavBarNowPlayingSelected() {
+        BottomNavigationView nav = (BottomNavigationView) findViewById(R.id.navigation);
+        nav.setSelectedItemId(R.id.navigation_nowPlaying);
     }
 
     public int getCurrentSongIndex() {
