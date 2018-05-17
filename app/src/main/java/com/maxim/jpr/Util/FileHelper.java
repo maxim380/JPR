@@ -10,6 +10,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 public class FileHelper {
@@ -50,16 +52,22 @@ public class FileHelper {
         }
 
         String[] strings = new String[songs.size()];
-        for(int i = 0; i < songs.size(); i++) {
+        for (int i = 0; i < songs.size(); i++) {
             strings[i] = songs.get(i);
         }
 
         return strings;
     }
 
-    private static boolean fileExists(Context context) {
-        File file = new File(context.getFilesDir(), FILENAME);
-        return file.exists();
-    }
+    public static void clearList(Context context) {
+        OutputStream outputStream;
+        try {
+            outputStream = context.openFileOutput(FILENAME, Context.MODE_PRIVATE);
+            outputStream.write("".getBytes());
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
+    }
 }

@@ -81,8 +81,6 @@ public class PlayerPage extends Fragment {
             playImg.setImageResource(R.drawable.ic_pause);
         }
 
-
-
         createListeners();
         return view;
     }

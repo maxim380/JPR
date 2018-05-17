@@ -9,7 +9,7 @@
         android:entryValues="@array/listValues" />
     <Preference
         android:title="Clear song names"
-        android:summary="Clear the list of songs names'"
+        android:summary="Clear the list of songs names"
         android:key="clearList"
         android:defaultValue="false"
         />
