@@ -3,6 +3,8 @@ package com.maxim.jpr.Util;
 import android.content.Context;
 import android.util.Log;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -21,6 +23,7 @@ public class FileHelper {
     public static void appendSong(Context context, String song) {
         FileOutputStream outputStream;
         song = song + "\n";
+
         try {
             outputStream = context.openFileOutput(FILENAME, Context.MODE_APPEND);
             outputStream.write(song.getBytes());

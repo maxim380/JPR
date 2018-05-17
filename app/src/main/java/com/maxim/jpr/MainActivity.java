@@ -221,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
             case -65536:
                 nav.setItemBackgroundResource(R.color.colorRed);
                 break;
-            case -10092289:
+            case -8388480:
                 nav.setItemBackgroundResource(R.color.colorPurple);
                 break;
             case -16744448:

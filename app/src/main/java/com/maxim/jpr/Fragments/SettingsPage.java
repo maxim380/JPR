@@ -13,8 +13,6 @@ import com.maxim.jpr.MainActivity;
 import com.maxim.jpr.R;
 import com.maxim.jpr.Util.FileHelper;
 
-import static android.content.Context.MODE_PRIVATE;
-
 public class SettingsPage extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private ListPreference mListPreference;

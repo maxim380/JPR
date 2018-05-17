@@ -23,7 +23,10 @@ import com.maxim.jpr.Models.Station;
 import com.maxim.jpr.R;
 import com.maxim.jpr.Util.FileHelper;
 
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jsoup.Jsoup;
+import org.jsoup.helper.StringUtil;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
@@ -169,6 +172,7 @@ public class PlayerPage extends Fragment {
         protected String doInBackground(String... strings) {
             final StringBuilder builder = new StringBuilder();
             final String url = strings[0];
+            String tmpSong = "";
             try {
                 Document doc = Jsoup.connect(url).get();
                 String[] test = doc.toString().split("\"");
@@ -178,10 +182,14 @@ public class PlayerPage extends Fragment {
                         builder.append(test[i + 2]);
                     }
                 }
+                tmpSong = StringEscapeUtils.unescapeJava(builder.toString());
+                String song = StringEscapeUtils.unescapeJava(tmpSong);
+
+                return song;
             } catch (IOException e) {
                 builder.append("Error : ").append(e.getMessage()).append("\n");
+                return builder.toString();
             }
-            return builder.toString();
         }
 
         @Override
