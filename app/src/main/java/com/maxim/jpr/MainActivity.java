@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
                 loadApp();
                 changeColor(getColor());
             }
-        }, 5000);   //5 seconds
+        }, 5000);
 
     }
 
@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadSplashScreen() {
         BottomNavigationView nav = findViewById(R.id.navigation);
-        nav.setVisibility(View.INVISIBLE);
+        nav.setVisibility(View.GONE);
 
         SplashScreen fragment = new SplashScreen();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();

@@ -10,6 +10,8 @@ import android.support.v7.preference.PreferenceManager;
 import com.maxim.jpr.MainActivity;
 import com.maxim.jpr.R;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class SettingsPage extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private ListPreference mListPreference;
@@ -39,8 +41,22 @@ public class SettingsPage extends PreferenceFragmentCompat implements SharedPref
             if(preference.getTitle().toString().equals("App color")) {
                 String colourString = sharedPreferences.getString("colorString", "");
                 activity.changeColor(activity.getColor());
+            } else if (preference.getTitle().toString().equals("Clear song names")) {
+                if(sharedPreferences.getString("clearList", "false").equals("true"))
+                clearSongNames();
             }
         }
+    }
+
+    private void clearSongNames() {
+        SharedPreferences pref = activity.getApplicationContext().getSharedPreferences("colorPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+
+        editor.remove("clearList");
+        editor.commit();
+
+        editor.putString("clearList", "false");
+
     }
 
     @Override

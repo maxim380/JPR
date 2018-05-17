@@ -1,17 +1,19 @@
 package com.maxim.jpr.Fragments;
 
-
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,12 +21,12 @@ import com.maxim.jpr.MainActivity;
 import com.maxim.jpr.MediaPlayerService;
 import com.maxim.jpr.Models.Station;
 import com.maxim.jpr.R;
+import com.maxim.jpr.Util.FileHelper;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -36,7 +38,8 @@ public class PlayerPage extends Fragment {
     private TextView titleText;
     private TextView infoText;
     private Button songButton;
-
+    private Button allSongsButton;
+    
     private Station station;
 
     private MainActivity activity;
@@ -61,6 +64,7 @@ public class PlayerPage extends Fragment {
         playImg = (ImageView) view.findViewById(R.id.playImg);
         albumArt = (ImageView) view.findViewById(R.id.albumArt);
         songButton = (Button) view.findViewById(R.id.songButton);
+        allSongsButton = (Button) view.findViewById(R.id.allSongsButton);
 
         setSongInfo(activity.getCurrentSong());
 
@@ -114,6 +118,36 @@ public class PlayerPage extends Fragment {
                 getSongName();
             }
         });
+        
+        allSongsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showAllSongs();
+            }
+        });
+    }
+
+    private void showAllSongs() {
+        String[] names = FileHelper.getSongList(this.getContext());
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this.getContext());
+        LayoutInflater inflater = getLayoutInflater();
+        View convertView = (View) inflater.inflate(R.layout.list, null);
+        alertDialog.setView(convertView);
+        alertDialog.setTitle("Song names");
+        final ListView lv = (ListView) convertView.findViewById(R.id.listView1);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this.getContext(),android.R.layout.simple_list_item_1,names);
+        lv.setAdapter(adapter);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String url = "https://www.youtube.com/results?search_query=";
+                String song = lv.getItemAtPosition(position).toString().replace(" ", "+");
+                url += song;
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                startActivity(browserIntent);
+            }
+        });
+        alertDialog.show();
     }
 
     public void setSongInfo(Station file) {
@@ -156,6 +190,7 @@ public class PlayerPage extends Fragment {
         protected void onPostExecute(String result) {
             Toast.makeText(getActivity(), result,
                     Toast.LENGTH_LONG).show();
+            FileHelper.appendSong(getContext(), result);
         }
     }
 }

@@ -7,4 +7,10 @@
         android:defaultValue="1"
         android:entries="@array/listArray"
         android:entryValues="@array/listValues" />
+    <Preference
+        android:title="Clear song names"
+        android:summary="Clear the list of songs names'"
+        android:key="clearList"
+        android:defaultValue="false"
+        />
 </PreferenceScreen>
