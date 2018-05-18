@@ -2,6 +2,7 @@ package com.maxim.jpr;
 
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
@@ -11,6 +12,7 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
@@ -74,6 +76,8 @@ public class MainActivity extends AppCompatActivity {
     private void loadSplashScreen() {
         BottomNavigationView nav = findViewById(R.id.navigation);
         nav.setVisibility(View.GONE);
+        getWindow().setStatusBarColor(getResources().getColor(R.color.colorRed));
+
 
         SplashScreen fragment = new SplashScreen();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -235,4 +239,26 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView nav = (BottomNavigationView) findViewById(R.id.navigation);
         nav.setSelectedItemId(R.id.navigation_nowPlaying);
     }
+
+    @Override
+    public void onBackPressed() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Are you sure you want to close JPR?");
+        builder.setCancelable(true);
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        builder.setPositiveButton("Close it", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
 }
