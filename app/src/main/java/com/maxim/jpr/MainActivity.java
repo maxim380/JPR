@@ -1,17 +1,23 @@
 package com.maxim.jpr;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
@@ -40,11 +46,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        stationlist = StationSupplier.getStations();
         loadSplashScreen();
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         Handler handler = new Handler();
-        stationlist = StationSupplier.getStations();
         handler.postDelayed(new Runnable() {
             public void run() {
                 loadApp();
@@ -168,6 +174,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        hideNotification();
         if (serviceBound) {
             unbindService(serviceConnection);
             mediaPlayer.stopSelf();
@@ -261,4 +268,56 @@ public class MainActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        System.out.println("PAUSE");
+        buildNotification();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        System.out.println("RESUME");
+        hideNotification();
+    }
+
+    private void buildNotification() {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            String CHANNEL_ID = "my_channel_01";
+            CharSequence name = "my_channel";
+            String description = "This is my channel";
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, name, importance);
+            notificationChannel.setDescription(description);
+            notificationChannel.enableLights(true);
+            notificationChannel.setLightColor(R.color.colorRed);
+            notificationChannel.enableVibration(true);
+            notificationChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+            notificationChannel.setShowBadge(false);
+            notificationManager.createNotificationChannel(notificationChannel);
+        }
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "my_channel_01")
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentText("JPR")
+                .setContentText(getCurrentSong().getTitle() + " is playing in the background");
+
+        Intent resultIntnet = new Intent(this, MainActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addParentStack(MainActivity.class);
+        stackBuilder.addNextIntent(resultIntnet);
+        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        builder.setContentIntent(resultPendingIntent);
+
+        notificationManager.notify(1, builder.build());
+    }
+
+    private void hideNotification() {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
+    }
 }
