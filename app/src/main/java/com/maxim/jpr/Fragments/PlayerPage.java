@@ -238,9 +238,20 @@ public class PlayerPage extends Fragment {
 
         @Override
         protected void onPostExecute(String result) {
-            Toast.makeText(getActivity(), result,
-                    Toast.LENGTH_LONG).show();
-            FileHelper.appendSong(getContext(), result);
+            if(result != "ERROR") {
+                Toast.makeText(getActivity(), result,
+                        Toast.LENGTH_LONG).show();
+                FileHelper.appendSong(getContext(), result);
+            } else {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+                builder.setMessage("The API might be a bit slow sometimes, please try again in a few seconds. If the problem persists, please contact me on my github page.")
+                        .setTitle("Something went wrong!");
+
+                AlertDialog dialog = builder.create();
+            }
+
         }
     }
 }
