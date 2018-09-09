@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,13 +24,15 @@ import com.maxim.jpr.Models.Station;
 import com.maxim.jpr.R;
 import com.maxim.jpr.Util.FileHelper;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.helper.StringUtil;
-import org.jsoup.nodes.Document;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -42,7 +45,7 @@ public class PlayerPage extends Fragment {
     private TextView infoText;
     private Button songButton;
     private Button allSongsButton;
-    
+
     private Station station;
 
     private MainActivity activity;
@@ -79,7 +82,7 @@ public class PlayerPage extends Fragment {
                 playImg.setTag(R.drawable.ic_pause);
                 playImg.setImageResource(R.drawable.ic_pause);
             }
-        } else if(fromPress) {
+        } else if (fromPress) {
             playImg.setTag(R.drawable.ic_pause);
             playImg.setImageResource(R.drawable.ic_pause);
         }
@@ -102,7 +105,7 @@ public class PlayerPage extends Fragment {
                         playImg.setTag(R.drawable.ic_play_arrow);
                     }
                 } else {
-                    if(activity.getFirstSong() != null) {
+                    if (activity.getFirstSong() != null) {
                         activity.playAudio(activity.getFirstSong().getUrl(), 0);
                         mediaPlayer = activity.getMediaPlayer();
                         setSongInfo(activity.getFirstSong());
@@ -119,7 +122,7 @@ public class PlayerPage extends Fragment {
                 getSongName();
             }
         });
-        
+
         allSongsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -136,7 +139,7 @@ public class PlayerPage extends Fragment {
         alertDialog.setView(convertView);
         alertDialog.setTitle("Song names");
         final ListView lv = (ListView) convertView.findViewById(R.id.listView1);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this.getContext(),android.R.layout.simple_list_item_1,names);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this.getContext(), android.R.layout.simple_list_item_1, names);
         lv.setAdapter(adapter);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -153,7 +156,7 @@ public class PlayerPage extends Fragment {
 
     public void setSongInfo(Station file) {
         this.station = file;
-        if(file != null) {
+        if (file != null) {
             titleText.setText(file.getTitle());
             infoText.setText(file.getDescription());
             albumArt.setImageBitmap(file.getAlbumArt());
@@ -168,28 +171,69 @@ public class PlayerPage extends Fragment {
 
     private class GetSong extends AsyncTask<String, String, String> {
 
+//        @Override
+//        protected String doInBackground(String... strings) {
+//            final StringBuilder builder = new StringBuilder();
+//            final String url = strings[0];
+//            String tmpSong = "";
+//            try {
+//                Document doc = Jsoup.connect(url).get();
+//                String[] test = doc.toString().split("\"");
+//                for(int i = 0; i < test.length; i++) {
+//                    String s = test[i];
+//                    if (s.equals("song")) {
+//                        builder.append(test[i + 2]);
+//                    }
+//                }
+//                tmpSong = StringEscapeUtils.unescapeJava(builder.toString());
+//                String song = StringEscapeUtils.unescapeJava(tmpSong);
+//
+//                return song;
+//            } catch (IOException e) {
+//                builder.append("Error : ").append(e.getMessage()).append("\n");
+//                return builder.toString();
+//            }
+//        }
+
         @Override
         protected String doInBackground(String... strings) {
-            final StringBuilder builder = new StringBuilder();
-            final String url = strings[0];
-            String tmpSong = "";
             try {
-                Document doc = Jsoup.connect(url).get();
-                String[] test = doc.toString().split("\"");
-                for(int i = 0; i < test.length; i++) {
-                    String s = test[i];
-                    if (s.equals("song")) {
-                        builder.append(test[i + 2]);
-                    }
-                }
-                tmpSong = StringEscapeUtils.unescapeJava(builder.toString());
-                String song = StringEscapeUtils.unescapeJava(tmpSong);
+                URL url = new URL("https://jpr-api.herokuapp.com/getSong");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
+                conn.setRequestProperty("Accept", "application/json");
+                conn.setDoOutput(true);
+                conn.setDoInput(true);
 
-                return song;
-            } catch (IOException e) {
-                builder.append("Error : ").append(e.getMessage()).append("\n");
-                return builder.toString();
+                JSONObject jsonParam = new JSONObject();
+                jsonParam.put("station", strings[0]);
+
+                Log.i("JSON", jsonParam.toString());
+                DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
+                dos.writeBytes(jsonParam.toString());
+
+                dos.flush();
+                dos.close();
+
+                System.out.println("STATUS :" + String.valueOf(conn.getResponseCode()));
+
+                BufferedReader in = new BufferedReader(
+                        new InputStreamReader(conn.getInputStream()));
+                String inputLine;
+                StringBuffer response = new StringBuffer();
+
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+
+                conn.disconnect();
+                return response.toString();
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
             }
+            return "ERROR";
         }
 
         @Override

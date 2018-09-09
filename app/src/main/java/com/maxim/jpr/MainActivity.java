@@ -32,8 +32,6 @@ import com.maxim.jpr.Models.Station;
 import com.maxim.jpr.Util.StationSupplier;
 
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
     private MediaPlayerService mediaPlayer;
