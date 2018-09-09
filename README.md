@@ -2,3 +2,5 @@
 
 # JPR
 A simple Android app to stream some Japanese radio channels. Makes use of the [JPR API](https://github.com/maxim380/JPR_API/).
+
+***This is just a fun project for me to work on and in no way an app that fully works.***
